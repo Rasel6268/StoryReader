@@ -118,7 +118,7 @@ export default function AdminLayout({ children, user }) {
           </div>
 
           {/* Content Area */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
+          <div className="bg-white rounded-xl shadow-sm border text-black border-gray-200 p-4 md:p-6">
             {children}
           </div>
 

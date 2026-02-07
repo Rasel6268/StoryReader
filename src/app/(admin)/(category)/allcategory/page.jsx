@@ -1,44 +1,52 @@
 'use client';
 
+import publicApi from '@/api/publicAPi';
+import {useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 export default function AllCategories() {
   // Mock categories data
-  const [categories, setCategories] = useState([
-    { id: 1, name: 'Technology', description: 'Tech news, tutorials, and reviews', storyCount: 45 },
-    { id: 2, name: 'Travel', description: 'Travel guides and destination tips', storyCount: 28 },
-    { id: 3, name: 'Food', description: 'Recipes, cooking tips, and restaurant reviews', storyCount: 32 },
-    { id: 4, name: 'Health', description: 'Fitness, wellness, and medical advice', storyCount: 19 },
-    { id: 5, name: 'Business', description: 'Startups, finance, and career advice', storyCount: 24 },
-    { id: 6, name: 'Lifestyle', description: 'Home, fashion, and personal growth', storyCount: 15 },
-    { id: 7, name: 'Sports', description: 'Sports news, analysis, and highlights', storyCount: 12 },
-    { id: 8, name: 'Entertainment', description: 'Movies, music, and celebrity news', storyCount: 26 },
-  ]);
+  // const [categories, setCategories] = useState([
+  //   { id: 1, name: 'Technology', description: 'Tech news, tutorials, and reviews', storyCount: 45 },
+  //   { id: 2, name: 'Travel', description: 'Travel guides and destination tips', storyCount: 28 },
+  //   { id: 3, name: 'Food', description: 'Recipes, cooking tips, and restaurant reviews', storyCount: 32 },
+  //   { id: 4, name: 'Health', description: 'Fitness, wellness, and medical advice', storyCount: 19 },
+  //   { id: 5, name: 'Business', description: 'Startups, finance, and career advice', storyCount: 24 },
+  //   { id: 6, name: 'Lifestyle', description: 'Home, fashion, and personal growth', storyCount: 15 },
+  //   { id: 7, name: 'Sports', description: 'Sports news, analysis, and highlights', storyCount: 12 },
+  //   { id: 8, name: 'Entertainment', description: 'Movies, music, and celebrity news', storyCount: 26 },
+  // ]);
 
   const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState('name');
+  const [sortBy, setSortBy] = useState('categName');
+  const queryClient = useQueryClient()
 
-  // Filter and sort categories
-  const filteredCategories = categories
-    .filter(category => 
-      category.name.toLowerCase().includes(search.toLowerCase()) ||
-      category.description.toLowerCase().includes(search.toLowerCase())
-    )
-    .sort((a, b) => {
-      if (sortBy === 'name') {
-        return a.name.localeCompare(b.name);
-      } else if (sortBy === 'stories') {
-        return b.storyCount - a.storyCount;
-      }
-      return 0;
-    });
 
-  // Handle category deletion
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this category?')) {
-      setCategories(categories.filter(cat => cat.id !== id));
+  const {data: categories,isLoading} =  useQuery({
+    queryKey:['category'],
+    queryFn: async() => {
+      const res = await publicApi.get('/category')
+      return res.data.data
     }
-  };
+  })
+  const {mutate: deleteCategory } = useMutation({
+    mutationFn: async(id) => {
+      const res = await publicApi.delete(`/category/${id}`)
+      return res.data;
+
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries("category")
+    }
+  })
+  const catDeleteHandler = (id) => {
+      deleteCategory(id)
+  }
+  
+
+  
+
+ 
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -51,18 +59,18 @@ export default function AllCategories() {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-          <div className="text-2xl font-bold text-gray-900">{categories.length}</div>
+          <div className="text-2xl font-bold text-gray-900">{categories?.length}</div>
           <div className="text-gray-600">Total Categories</div>
         </div>
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
           <div className="text-2xl font-bold text-gray-900">
-            {categories.reduce((sum, cat) => sum + cat.storyCount, 0)}
+            {categories?.reduce((sum, cat) => sum + cat.storyCount, 0)}
           </div>
           <div className="text-gray-600">Total Stories</div>
         </div>
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
           <div className="text-2xl font-bold text-gray-900">
-            {Math.round(categories.reduce((sum, cat) => sum + cat.storyCount, 0) / categories.length)}
+            {Math.round(categories?.reduce((sum, cat) => sum + cat.storyCount, 0) / categories?.length)}
           </div>
           <div className="text-gray-600">Avg. Stories per Category</div>
         </div>
@@ -97,22 +105,19 @@ export default function AllCategories() {
       </div>
 
       {/* Categories Grid */}
-      {filteredCategories.length > 0 ? (
+      {categories?.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCategories.map((category) => (
+          {categories.map((category) => (
             <div
               key={category.id}
               className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6"
             >
               <div className="flex justify-between items-start mb-4">
-                <h3 className="text-xl font-bold text-gray-900">{category.name}</h3>
+                <h3 className="text-xl font-bold text-gray-900">{category.categName}</h3>
                 <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
                   {category.storyCount} stories
                 </span>
               </div>
-              
-              <p className="text-gray-600 mb-6">{category.description}</p>
-              
               <div className="flex justify-between items-center">
                 <button className="text-blue-600 hover:text-blue-800 font-medium">
                   View Stories →
@@ -122,7 +127,7 @@ export default function AllCategories() {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(category.id)}
+                    onClick={() => catDeleteHandler(category._id)}
                     className="px-3 py-1 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100"
                   >
                     Delete
@@ -146,7 +151,7 @@ export default function AllCategories() {
       )}
 
       {/* Pagination (Simple) */}
-      {filteredCategories.length > 0 && (
+      {categories?.length > 0 && (
         <div className="mt-8 flex justify-center">
           <div className="flex items-center gap-2">
             <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">

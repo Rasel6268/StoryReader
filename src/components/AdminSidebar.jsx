@@ -52,6 +52,16 @@ export default function AdminSidebar({ sidebarOpen, currentPath, user }) {
       ]
     },
     {
+      id: 'SubCategories',
+      label: 'Sub Category',
+      icon: '🏷️',
+      href: null,
+      children: [
+        { label: 'All Sub-Category', href: '/allsubCategory' },
+        { label: 'Add Sub-Category', href: '/subcategory' },
+      ]
+    },
+    {
       id: 'users',
       label: 'Users',
       icon: '👥',
