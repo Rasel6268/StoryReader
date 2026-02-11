@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const publicApi = axios.create({
-  baseURL: 'http://localhost:3001', 
+  baseURL: 'https://story-reader-backendconfig.vercel.app', 
 });
 
 export default publicApi;
