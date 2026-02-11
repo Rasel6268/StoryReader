@@ -5,18 +5,7 @@ import {useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 export default function AllCategories() {
-  // Mock categories data
-  // const [categories, setCategories] = useState([
-  //   { id: 1, name: 'Technology', description: 'Tech news, tutorials, and reviews', storyCount: 45 },
-  //   { id: 2, name: 'Travel', description: 'Travel guides and destination tips', storyCount: 28 },
-  //   { id: 3, name: 'Food', description: 'Recipes, cooking tips, and restaurant reviews', storyCount: 32 },
-  //   { id: 4, name: 'Health', description: 'Fitness, wellness, and medical advice', storyCount: 19 },
-  //   { id: 5, name: 'Business', description: 'Startups, finance, and career advice', storyCount: 24 },
-  //   { id: 6, name: 'Lifestyle', description: 'Home, fashion, and personal growth', storyCount: 15 },
-  //   { id: 7, name: 'Sports', description: 'Sports news, analysis, and highlights', storyCount: 12 },
-  //   { id: 8, name: 'Entertainment', description: 'Movies, music, and celebrity news', storyCount: 26 },
-  // ]);
-
+  
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('categName');
   const queryClient = useQueryClient()
@@ -43,11 +32,6 @@ export default function AllCategories() {
       deleteCategory(id)
   }
   
-
-  
-
- 
-
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}

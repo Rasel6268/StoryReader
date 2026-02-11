@@ -35,8 +35,8 @@ export default function AdminSidebar({ sidebarOpen, currentPath, user }) {
       icon: '📚',
       href: null,
       children: [
-        { label: 'All Stories', href: 'stories' },
-        { label: 'Add New Story', href: '/admin/stories/new' },
+        { label: 'All Stories', href: '/stories' },
+        { label: 'Add New Story', href: '/addStoey' },
         { label: 'Drafts', href: '/admin/stories/drafts' },
         { label: 'Published', href: '/admin/stories/published' },
       ]
